@@ -1,0 +1,85 @@
+{
+  "session": {
+    "start_if_not_exists": true
+  },
+  "headers": {
+    "content_type": "application/json",
+    "cors": {
+      "allow_origin": "*",
+      "allow_methods": ["POST", "OPTIONS"],
+      "allow_headers": ["Content-Type"]
+    }
+  },
+  "request_validation": {
+    "allowed_methods": ["POST"],
+    "required_fields": ["username", "password"],
+    "error_messages": {
+      "method_not_allowed": "Only POST method allowed",
+      "invalid_json": "Invalid JSON input",
+      "missing_credentials": "Username and password required"
+    }
+  },
+  "device_id": {
+    "generated_from": [
+      "HTTP_USER_AGENT",
+      "HTTP_ACCEPT_LANGUAGE",
+      "SERVER_HOSTNAME"
+    ],
+    "hash_algorithm": "sha256",
+    "store_in_session": "device_id"
+  },
+  "ip_detection": {
+    "default": "REMOTE_ADDR",
+    "proxy_headers": [
+      "HTTP_CLIENT_IP",
+      "HTTP_X_FORWARDED_FOR",
+      "HTTP_X_FORWARDED",
+      "HTTP_X_CLUSTER_CLIENT_IP",
+      "HTTP_FORWARDED_FOR",
+      "HTTP_FORWARDED"
+    ]
+  },
+  "authentication": {
+    "table": "student",
+    "login_fields": ["username", "email"],
+    "password_verification": {
+      "preferred": "password_verify",
+      "fallback": "plain_text_match_and_upgrade"
+    },
+    "upgrade_strategy": {
+      "algorithm": "password_hash",
+      "method": "PASSWORD_DEFAULT",
+      "update_field": "password"
+    },
+    "errors": {
+      "invalid_credentials": "Invalid credentials"
+    }
+  },
+  "logging": {
+    "table": "login",
+    "fields": ["student_name", "ip", "device_id", "enrollment_number", "login_time"]
+  },
+  "response": {
+    "success": {
+      "status": "success",
+      "message": "Login successful",
+      "fields_returned": [
+        "username",
+        "email",
+        "enrollment_number",
+        "device_ip",
+        "device_id"
+      ]
+    },
+    "errors": {
+      "database": {
+        "status": "error",
+        "message": "Database error"
+      },
+      "server": {
+        "status": "error",
+        "message": "Server error"
+      }
+    }
+  }
+}
